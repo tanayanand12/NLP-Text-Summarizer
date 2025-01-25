@@ -1,0 +1,8 @@
+# render.yaml
+services:
+  - type: web
+    name: nlp-text-summarizer
+    env: python3.9
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    plan: free

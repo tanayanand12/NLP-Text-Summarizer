@@ -1,0 +1,53 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NLP Text Summarizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto max-w-xl">
+        <h1 class="text-3xl font-bold mb-4 text-center">Text Summarizer</h1>
+        <textarea id="input-text" rows="8" 
+            class="w-full p-3 border rounded mb-4" 
+            placeholder="Enter text to summarize..."></textarea>
+        <button id="summarize-btn" 
+            class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+            Summarize
+        </button>
+        <div id="summary-result" 
+            class="mt-4 p-3 bg-white border rounded"></div>
+    </div>
+
+    <script>
+        document.getElementById('summarize-btn').addEventListener('click', async () => {
+            const text = document.getElementById('input-text').value;
+            const resultDiv = document.getElementById('summary-result');
+            
+            try {
+                const response = await fetch('/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    resultDiv.innerHTML = `<p class="text-red-500">${data.error}</p>`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h2 class="font-bold mb-2">Summary:</h2>
+                        <p>${data.summary}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
